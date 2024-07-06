@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QVBoxLayout, QComboBox, QLabel, \
-    QWidget, QGridLayout, QLineEdit, QPushButton, QMainWindow
+    QWidget, QGridLayout, QLineEdit, QPushButton, QMainWindow,QTableWidget
 
 from PyQt6.QtGui import QAction
 
@@ -20,6 +20,12 @@ class MainWindow(QMainWindow):
         help_menu_item.addAction(about_action)
         # 需要加这一行 Mac 否则看不到 Help
         about_action.setMenuRole(QAction.MenuRole.NoRole)
+
+        # Create table
+        self.table = QTableWidget()
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(('id', 'Name', 'Course', 'Mobile'))
+        self.setCentralWidget(self.table)
 
 
 app = QApplication(sys.argv)
