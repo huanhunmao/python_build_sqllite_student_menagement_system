@@ -2,9 +2,9 @@ import sys
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QVBoxLayout, QComboBox, QLabel, \
     QWidget, QGridLayout, QLineEdit, QPushButton, QMainWindow, QTableWidget, \
-    QTableWidgetItem, QDialog
+    QTableWidgetItem, QDialog, QToolBar
 
-from PyQt6.QtGui import QAction
+from PyQt6.QtGui import QAction, QIcon
 import sqlite3
 
 
@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
         help_menu_item = self.menuBar().addMenu('&Help')
         edit_menu_item = self.menuBar().addMenu('&Edit')
 
-        add_student_action = QAction('Add Student', self)
+        add_student_action = QAction(QIcon('icons/add.png'),'Add Student', self)
         # 触发 添加的弹窗
         add_student_action.triggered.connect(self.insert)
         file_menu_item.addAction(add_student_action)
@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
         about_action = QAction('About', self)
         help_menu_item.addAction(about_action)
 
-        search_action = QAction('Search', self)
+        search_action = QAction(QIcon('icons/search.png') ,'Search', self)
         # 触发 Edit 的弹窗
         search_action.triggered.connect(self.search)
         edit_menu_item.addAction(search_action)
@@ -40,6 +40,14 @@ class MainWindow(QMainWindow):
         # 去掉第一列 id 前的 index
         self.table.verticalHeader().setVisible(False)
         self.setCentralWidget(self.table)
+
+        # Create toolbar and add toolbar elements
+        toolBar = QToolBar()
+        toolBar.setMovable(True)
+        self.addToolBar(toolBar)
+
+        toolBar.addAction(add_student_action)
+        toolBar.addAction(search_action)
 
     def load_data(self):
         connection = sqlite3.connect('database.db')
