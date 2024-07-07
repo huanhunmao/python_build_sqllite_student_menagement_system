@@ -12,6 +12,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Student Management System')
+        self.setMinimumSize(800, 600)
 
         file_menu_item = self.menuBar().addMenu('&File')
         help_menu_item = self.menuBar().addMenu('&Help')
@@ -146,7 +147,6 @@ class SearchDialog(QDialog):
         cursor = connection.cursor()
         result = cursor.execute("SELECT * FROM students WHERE name = ?", (name,))
         row = list(result)[0]
-        print(row)
         items = main_window.table.findItems(row[1], Qt.MatchFlag.MatchFixedString)
         for item in items:
             print(item)
