@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QVBoxLayout, QComboBox, QLabel, \
     QWidget, QGridLayout, QLineEdit, QPushButton, QMainWindow, QTableWidget, \
-    QTableWidgetItem
+    QTableWidgetItem, QDialog
 
 from PyQt6.QtGui import QAction
 import sqlite3
@@ -16,6 +16,8 @@ class MainWindow(QMainWindow):
         help_menu_item = self.menuBar().addMenu('&Help')
 
         add_student_action = QAction('Add Student', self)
+        # 触发 添加的弹窗
+        add_student_action.triggered.connect(self.insert)
         file_menu_item.addAction(add_student_action)
 
         about_action = QAction('About', self)
@@ -44,9 +46,62 @@ class MainWindow(QMainWindow):
                                    QTableWidgetItem(str(data)))
         connection.close()
 
+    def insert(self):
+            dialog = InsertDialog()
+            dialog.exec()
+
+
+class InsertDialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('Insert Student Data')
+        self.setFixedWidth(300)
+        self.setFixedHeight(300)
+
+        layout = QVBoxLayout()
+
+        # Add name
+        self.student_name = QLineEdit()
+        self.student_name.setPlaceholderText('Name')
+        layout.addWidget(self.student_name)
+
+        # Add combo box of courses
+        self.course_name = QComboBox()
+        self.courses = ['Math', 'English', 'Physics']
+        self.course_name.addItems(self.courses)
+        layout.addWidget(self.course_name)
+
+        # Add mobile widget
+        self.mobile = QLineEdit()
+        self.mobile.setPlaceholderText('mobile')
+        layout.addWidget(self.mobile)
+
+        # Add submit button
+        button = QPushButton("Register")
+        button.clicked.connect(self.add_student)
+        layout.addWidget(button)
+
+        self.setLayout(layout)
+
+    def add_student(self):
+        name = self.student_name.text()
+        course = self.course_name.itemText(self.course_name.currentIndex())
+        mobile = self.mobile.text()
+        connection = sqlite3.connect('database.db')
+        cursor = connection.cursor()
+        # 插入数据
+        cursor.execute(
+            'INSERT INTO students (name, course, mobile) VALUES (?, ?, ?)',
+            (name, course, mobile))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        # 添加后刷新数据
+        main_window.load_data()
+
 
 app = QApplication(sys.argv)
-app_calculator = MainWindow()
-app_calculator.load_data()
-app_calculator.show()
+main_window = MainWindow()
+main_window.load_data()
+main_window.show()
 sys.exit(app.exec())
