@@ -25,6 +25,8 @@ class MainWindow(QMainWindow):
         file_menu_item.addAction(add_student_action)
 
         about_action = QAction('About', self)
+        # 触发 About 的弹窗
+        about_action.triggered.connect(self.about)
         help_menu_item.addAction(about_action)
 
         search_action = QAction(QIcon('icons/search.png'), 'Search', self)
@@ -101,6 +103,9 @@ class MainWindow(QMainWindow):
         dialog = DeleteDialog()
         dialog.exec()
 
+    def about(self):
+        dialog = AboutDialog()
+        dialog.exec()
 
 class InsertDialog(QDialog):
     def __init__(self):
@@ -289,6 +294,15 @@ class DeleteDialog(QDialog):
 
     def cancel_delete(self):
         self.close()
+
+
+class AboutDialog(QMessageBox):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle('About This app')
+        self.setText('You can change or update the app!')
+
 
 app = QApplication(sys.argv)
 main_window = MainWindow()
