@@ -8,6 +8,15 @@ from PyQt6.QtGui import QAction, QIcon
 import sqlite3
 
 
+class DateBaseConnection:
+    def __init__(self, database_file='database.db'):
+        self.database_file = database_file
+
+    def connect(self):
+        connection = sqlite3.connect(self.database_file)
+        return connection
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -76,7 +85,7 @@ class MainWindow(QMainWindow):
         self.statusbar.addWidget(delete_button)
 
     def load_data(self):
-        connection = sqlite3.connect('database.db')
+        connection = DateBaseConnection().connect()
         result = connection.execute("SELECT * FROM students")
         # 确保 不重复
         self.table.setRowCount(0)
@@ -143,7 +152,7 @@ class InsertDialog(QDialog):
         name = self.student_name.text()
         course = self.course_name.itemText(self.course_name.currentIndex())
         mobile = self.mobile.text()
-        connection = sqlite3.connect('database.db')
+        connection = DateBaseConnection().connect()
         cursor = connection.cursor()
         # 插入数据
         cursor.execute(
@@ -235,7 +244,7 @@ class EditDialog(QDialog):
         self.setLayout(layout)
 
     def update_student(self):
-        connection = sqlite3.connect('database.db')
+        connection = DateBaseConnection().connect()
         cursor = connection.cursor()
         cursor.execute(
             'UPDATE students SET name=?, course=?, mobile=? WHERE id=?',
@@ -275,7 +284,7 @@ class DeleteDialog(QDialog):
         index = main_window.table.currentRow()
         student_id = main_window.table.item(index, 0).text()
 
-        connection = sqlite3.connect('database.db')
+        connection = DateBaseConnection().connect()
         cursor = connection.cursor()
         cursor.execute('DELETE from students WHERE id = ?', (student_id,))
         connection.commit()
